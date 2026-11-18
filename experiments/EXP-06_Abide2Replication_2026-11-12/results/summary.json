@@ -1,0 +1,119 @@
+{
+  "plan_sha256": "e27ce85f14a11abf8613625f659bd9d20318be7f19e136cee8d9d6e23316a4cd",
+  "flow": {
+    "participants_listed": 1007,
+    "longitudinal_excluded": 0,
+    "with_iq_age_sex_dx": 909,
+    "with_frames": 461,
+    "final_n": 460,
+    "final_sites": 11,
+    "n_by_site": {
+      "KKI_1": 192,
+      "GU_1": 57,
+      "TCD_1": 42,
+      "OHSU_1": 38,
+      "UCD_1": 25,
+      "KUL_3": 24,
+      "NYU_1": 22,
+      "IP_1": 19,
+      "NYU_2": 15,
+      "BNI_1": 13,
+      "UCLA_1": 13
+    }
+  },
+  "descriptives": {
+    "mean_fiq": 111.22826086956522,
+    "mean_age": 12.768485385697828,
+    "n_asd": 215,
+    "n_td": 245,
+    "mean_fd": 0.21747090614275336,
+    "median_frames": 155.0
+  },
+  "confirmatory": {
+    "H1": {
+      "g_log_k2": 0.8808891126202184,
+      "criterion": ">= 0.80",
+      "pass": true
+    },
+    "H2": {
+      "slope": -0.0017580336820764517,
+      "wild_cluster_t": -0.5076085914204048,
+      "wild_cluster_p": 0.6833366673334667,
+      "criterion": "slope < 0 and wild cluster p < 0.05",
+      "pass": false
+    },
+    "H2b": {
+      "slope": -0.0017580336820764517,
+      "criterion": "inside [-0.0091, -0.0010]",
+      "pass": true
+    },
+    "H3": {
+      "pcr2_measured": -0.0017803500612707484,
+      "ols": -0.001758033682076453,
+      "ratio": 1.012693942910091,
+      "criterion": "0.90 to 1.10",
+      "ols_interval_excludes_zero": false,
+      "pass": "not interpretable"
+    },
+    "H4": {
+      "pcr2_site_sd": -0.00011219805214322812,
+      "ols": -0.0007875138012018949,
+      "ratio_ols_over_pcr2": 7.018961436127093,
+      "criterion": "> 1.5",
+      "ols_interval_excludes_zero": false,
+      "pass": "not interpretable"
+    },
+    "H5": {
+      "york_reduced_chi2": 13.431367681794429,
+      "criterion": "> 5",
+      "pass": true
+    },
+    "raw_scale_H2_for_reference": {
+      "slope": -0.0007053392225106214,
+      "wild_cluster_t": -0.4661064185646089,
+      "wild_cluster_p": 0.7529505901180236
+    }
+  },
+  "secondary": {
+    "dx_main_effect_td_minus_asd_log": -0.365613352670859,
+    "dx_p_cluster": 2.1917291952806298e-09,
+    "iq_x_dx_interaction_log": -0.005632899179017074,
+    "iq_x_dx_p_cluster": 0.044746174241412466,
+    "between_run": {
+      "n_subjects": 57,
+      "n_runs": 171,
+      "sites": {
+        "IP_1": 19,
+        "OHSU_1": 38
+      },
+      "sessions_seen": [
+        "1"
+      ],
+      "icc1_raw": 0.4189966117967972,
+      "icc1_log": 0.5978133819204012,
+      "icc1_log_within_site": 0.592617172343551
+    },
+    "pooled_abide1_abide2": {
+      "n": 1313,
+      "sites": 30,
+      "log_slope_controls": -0.0030753534943588285,
+      "wild_cluster_p": 0.07241448289657931,
+      "raw_slope_controls": -0.0008073084214292424,
+      "raw_wild_cluster_p": 0.2012402480496099,
+      "log_rc": -0.003294300457575018,
+      "log_pcr2_measured": -0.003086975596106027
+    }
+  },
+  "receipt": {
+    "abide2_manifest": "585a0fc4037d05323a00d423ad2c36eef7c2c571acef75344a5742ad74e726fd",
+    "script": "c6132dca8a830f904e3402271636de0b31de2f60ff03ba68220aa563062276eb",
+    "exp04_script": "434db20553b78455691ecb24af854381db15c984549ff9a797fe03e41e5bcd9e",
+    "exp05_script": "ed084d55fcb8eaa3c779a8cb91dff1d06781e558900bb1b5327335beb28fae24",
+    "bootstrap": {
+      "reps": 1000,
+      "seed": 20261112
+    },
+    "run_utc": "2026-11-12T04:05:18Z",
+    "runtime_s": 61.7
+  }
+}

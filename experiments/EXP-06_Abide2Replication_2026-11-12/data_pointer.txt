@@ -1,0 +1,6 @@
+ABIDE-II inputs for EXP-06 (16 participant tables, 699 fMRIPrep confounds tables, 65.4 MB) live outside the repo:
+D:\Dev\Data\eiv-abide-replication\abide2\
+manifest.json there lists every file with size and SHA-256.
+Source: s3://fcp-indi/data/Projects/ABIDE2/ (public).
+Rebuild: python experiments/EXP-06_Abide2Replication_2026-11-12/scripts/download_abide2.py
+File names contain ABIDE subject IDs; do not copy them into the repo.

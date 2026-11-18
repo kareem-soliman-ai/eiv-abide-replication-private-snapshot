@@ -19,7 +19,7 @@ pip install -r requirements.txt
 
 ## Data
 
-Download the public ABIDE-I phenotypic CSV separately, then place it in `data/abide_phenotypic.csv`. Detailed instructions are in [data/README.md](data/README.md).
+Download the public ABIDE-I phenotypic CSV separately, then place it in `data/abide_phenotypic.csv`. Detailed instructions are in [data/README.md](Projects/projects/public/eiv-abide-replication/data/README.md).
 
 ## Usage
 

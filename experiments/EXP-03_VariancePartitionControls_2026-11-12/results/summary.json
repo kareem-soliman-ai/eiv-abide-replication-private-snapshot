@@ -1,0 +1,51 @@
+{
+  "n": 935,
+  "sites": 19,
+  "P3_iq": {
+    "n_with_viq_piq": 778,
+    "viq_piq_r_pooled": 0.46379380871393594,
+    "viq_piq_r_within_site": 0.4674233765219745,
+    "spearman_brown_pooled": 0.6336873485226956,
+    "spearman_brown_within_site": 0.6370668261123682,
+    "assumed_reliability_from_sigma_x": 0.9450199030190415,
+    "fiq_sd": 14.961695210802185,
+    "implied_sigma_x_if_sb_within": 9.01351398064884
+  },
+  "receipt": {
+    "input_csv": "009f01a89697113e5375ded4fbcff4c85e89a4daa6d13e63c21ae5d57dda0865",
+    "eiv_core.py": "6b5f92b7d7bc7772ad184e1357b2f1c4368dd6ef5576a69549c50c65d325966e",
+    "script": "1e56dde9f8e74557ba1c32cd7637df3ad2b982201f9639b4d5ed17d1cace8232",
+    "bootstrap": {
+      "reps": 1000,
+      "seed": 20261112,
+      "unit": "site"
+    },
+    "runtime_s": 117.4
+  },
+  "P3_iq_reliability_sweep_at_M3": {
+    "fd_sigma_x_3.5": {
+      "iq_reliability_after_controls": 0.941,
+      "rc_slope": -0.0007490617512049033
+    },
+    "fd_sigma_x_6": {
+      "iq_reliability_after_controls": 0.826,
+      "rc_slope": -0.0008533426530731036
+    },
+    "fd_sigma_x_9.01": {
+      "iq_reliability_after_controls": 0.607,
+      "rc_slope": -0.001160745359592817
+    },
+    "log_fd_sigma_x_3.5": {
+      "iq_reliability_after_controls": 0.941,
+      "rc_slope": -0.004452819171118733
+    },
+    "log_fd_sigma_x_6": {
+      "iq_reliability_after_controls": 0.826,
+      "rc_slope": -0.005072719998084405
+    },
+    "log_fd_sigma_x_9.01": {
+      "iq_reliability_after_controls": 0.607,
+      "rc_slope": -0.006900084247617863
+    }
+  }
+}

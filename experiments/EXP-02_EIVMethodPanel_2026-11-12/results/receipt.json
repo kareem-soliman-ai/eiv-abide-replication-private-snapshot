@@ -1,0 +1,20 @@
+{
+  "experiment": "EXP-02_EIVMethodPanel_2026-11-12",
+  "eiv_core_version": "rasad-eiv/2",
+  "sources": {
+    "input_csv": "009f01a89697113e5375ded4fbcff4c85e89a4daa6d13e63c21ae5d57dda0865",
+    "eiv_core.py": "6b5f92b7d7bc7772ad184e1357b2f1c4368dd6ef5576a69549c50c65d325966e",
+    "pcr.py": "4d892afc1652e52ae9fac4d45a3a477ae7feb26479e6bb9c558b7e8856125c02",
+    "vendor/eiv_methods.py (PCR-methodology working tree, uncommitted at e858adc)": "0020c1c0ad6c8f2fe95bb33e98739c6dc645431bb924cec7dccc8744bbb5425b",
+    "vendor/pcr2_reference.py (PCR-methodology working tree, uncommitted at e858adc)": "0ecd449ecd4bbff80102c264a2718cdacc6836ddaf5b402caba54388f646bdc6",
+    "script": "2fe3e88e5d5c08f5088bc0077731e8a4ef2d1973b2cc4c08f297412254c94628"
+  },
+  "bootstrap": {
+    "reps_per_spec": 1000,
+    "seed": 20261112,
+    "unit": "site",
+    "simex_sims": 50
+  },
+  "python": "3.12.10",
+  "runtime_s": 141.8
+}

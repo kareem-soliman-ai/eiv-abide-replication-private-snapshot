@@ -1,0 +1,17 @@
+tier,n,method,slope,converged,intrinsic_variance
+Minimal motion,290,ols,-5.627499929884845e-05,True,
+Minimal motion,290,legacy_pcr,0.00010294788284457878,True,
+Minimal motion,290,functional,0.00010295191390371617,True,
+Minimal motion,290,structural,0.00010116098395058473,True,4.559362048202117e-06
+Low motion,163,ols,-1.0758507732458405e-05,True,
+Low motion,163,legacy_pcr,-3.0128148207664596e-05,True,
+Low motion,163,functional,-3.012814022293631e-05,True,
+Low motion,163,structural,-2.8149289002226526e-05,True,0.0
+Medium motion,228,ols,-0.0009679921075826884,True,
+Medium motion,228,legacy_pcr,-0.0006828282456093761,True,
+Medium motion,228,functional,-0.0006812293520167689,True,
+Medium motion,228,structural,-0.0006824179727014124,True,1.891452352915979e-05
+High motion,254,ols,-0.0026050653981433054,True,
+High motion,254,legacy_pcr,-0.0017367320778038406,True,
+High motion,254,functional,-0.0017362466011914878,True,
+High motion,254,structural,-0.001783317373063314,True,0.003364742166471264

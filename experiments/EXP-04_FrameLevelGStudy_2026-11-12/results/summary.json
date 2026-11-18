@@ -1,0 +1,68 @@
+{
+  "n_phenotypic_sample": 935,
+  "n_with_frames": 853,
+  "sites_with_frames": 19,
+  "missing_by_site": {
+    "USM": 70,
+    "MAX_MUN": 4,
+    "SDSU": 2,
+    "UM_1": 2,
+    "STANFORD": 2,
+    "PITT": 1,
+    "OHSU": 1
+  },
+  "frames_per_run": {
+    "min": 81,
+    "median": 179.0,
+    "max": 319
+  },
+  "G1_validation": {
+    "pearson_raw": 0.9563275015587491,
+    "pearson_log": 0.9561899191867613,
+    "spearman": 0.9565394201841537,
+    "mean_fmriprep_fd": 0.20406428153649847,
+    "mean_phenotypic_fd": 0.12663137511383354
+  },
+  "G2_split_half": {
+    "raw": {
+      "split_half_r_within_site": 0.7644709880330074,
+      "spearman_brown": 0.866515792232121
+    },
+    "log": {
+      "split_half_r_within_site": 0.8316589387851943,
+      "spearman_brown": 0.9080936643551916
+    }
+  },
+  "G3_between_run": {
+    "raw": {
+      "icc1_single_run": 0.3878519347195885
+    },
+    "log": {
+      "icc1_single_run": 0.44892691439556454
+    },
+    "n_subjects": 23,
+    "n_runs": 64,
+    "sites": {
+      "OHSU": 64
+    }
+  },
+  "G4_noise": {
+    "median_measured_noise_sd": 0.013084332489640577,
+    "mean_measured_noise_sd": 0.033949087778062596,
+    "mean_paper_style_site_sd": 0.18771353714242112,
+    "median_ratio_measured_over_site_sd": 0.09811079531555279,
+    "spearman_noise_sd_vs_mean_fd": 0.8396420039975793
+  },
+  "receipt": {
+    "phenotypic_csv": "009f01a89697113e5375ded4fbcff4c85e89a4daa6d13e63c21ae5d57dda0865",
+    "confounds_manifest": "de1acb30ffdebcc8b99af5acdb979e056de0c821c183192fcf95eab36923cd0c",
+    "eiv_core.py": "6b5f92b7d7bc7772ad184e1357b2f1c4368dd6ef5576a69549c50c65d325966e",
+    "script": "434db20553b78455691ecb24af854381db15c984549ff9a797fe03e41e5bcd9e",
+    "bootstrap": {
+      "reps": 1000,
+      "seed": 20261112,
+      "unit": "site"
+    },
+    "runtime_s": 97.7
+  }
+}

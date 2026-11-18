@@ -1,0 +1,438 @@
+% Site Spread Is Not Measurement Noise
+% Draft v2 replacement for the arXiv preprint "The IQ-Motion Confound in Multi-Site Autism fMRI
+% May Be Inflated by Site-Correlated Measurement Uncertainty" (v1, April 2026).
+% Kareem Soliman | DRAFT 2026-11-12 | NOT YET SUBMITTED
+% Every number below is taken from experiments/EXP-01 .. EXP-06 in this repository.
+% Lines marked "UNDERSTANDING CHECKPOINT" must be cleared by the author before submission.
+% Lines marked "TODO" need author input.
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{natbib}
+\usepackage{cleveref}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{float}
+\usepackage[margin=2.5cm]{geometry}
+\setlength{\parindent}{1em}
+\setlength{\parskip}{0.5em}
+
+\newcommand{\sx}{\sigma_{x}}
+\newcommand{\sy}{\sigma_{y}}
+
+\title{Site Spread Is Not Measurement Noise:\\A Correction and Generalisability Study of the IQ--Motion Association in ABIDE}
+\author{Kareem Soliman\\
+  Independent Researcher, Sydney, Australia\\
+  \texttt{kareem.soliman@outlook.com.au}\\
+  ORCID: 0009-0006-7204-1129
+}
+\date{Draft, November 2026. Replaces version 1 (April 2026).}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Version 1 of this paper reported that ordinary least squares (OLS) overstates the association between full-scale IQ and head motion in ABIDE-I by a factor of 4.67, and attributed this to site-correlated measurement uncertainty. That conclusion is withdrawn. The factor arose from treating each site's between-subject spread in mean framewise displacement (FD) as measurement noise. Twelve estimators fitted to the same data ($n = 935$, 19 sites) agree within 7\% once noise is not allowed to differ by site, and weighted least squares with no measurement-error model reproduces the factor. Correcting for IQ error alone makes the slope about 6\% steeper. We then measured the noise. A generalisability study on frame-level FD ($n = 853$) puts the reliability of a scan's mean FD at 0.84 to 0.95, so noise is roughly one tenth of the value version 1 assumed, and a structural errors-in-variables fit using measured noise matches OLS on the log scale. Controlling for site, age, sex and diagnosis shrinks the IQ slope by about 40\%, leaving a borderline association (wild cluster bootstrap $p = 0.052$). In a replication on ABIDE-II ($n = 460$, 11 sites), specified before the data were examined, the reliability result held (0.88) and the controlled IQ slope did not ($p = 0.68$). Autistic participants moved more than controls in both datasets. Mean FD is a reliable measure of motion within a scan; the IQ--motion association is weaker and less certain than pooled estimates suggest.
+\end{abstract}
+
+\textbf{Keywords:} head motion, framewise displacement, generalisability theory, errors-in-variables, ABIDE, replication, self-correction
+
+% ============================================================
+\section{Introduction}
+% ============================================================
+
+Head motion contaminates functional connectivity estimates, and it covaries with the traits that multi-site studies set out to examine \citep{Power2012, VanDijk2012, Satterthwaite2012}. Motion has also been treated as a characteristic of the person: it is heritable and stable across occasions \citep{CouvyDuchesne2014, Engelhardt2017, Zeng2014}, and data quality covaries with behavioural measures \citep{Siegel2017}. How strongly motion relates to a variable such as IQ therefore matters for any analysis that adjusts for one while studying the other.
+
+Version 1 of this paper \citep{Soliman2026v1} asked whether the pooled OLS estimate of the IQ--motion slope in ABIDE-I \citep{DiMartino2014} is biased by measurement error. It applied an errors-in-variables (EIV) estimator with per-observation uncertainties, used the within-site standard deviation of mean FD as the uncertainty in the outcome, and reported that OLS overstates the slope 4.67-fold. Version 1 flagged its own weakest point: the within-site standard deviation ``mixes true between-subject heterogeneity with measurement noise'', and a direct estimate from motion traces was listed as the first future direction.
+
+Two events prompted this revision. A numerical review of the estimator found that its parameter update is not the conditional maximisation step of a Gaussian likelihood and that the model has no term for genuine scatter around the regression line. Rerunning ABIDE-I with the corrected method then showed that the correction leaves the estimate unchanged, and that the 4.67-fold factor has a different origin from the one version 1 gave.
+
+So is the spread of motion within a site noise, or is it people? This paper answers that question directly and follows the consequences. We make four contributions. First, we show that the version 1 result is produced by site weighting under an untested assumption, using a panel of twelve estimators and a simulation from version 1's own model. Second, we estimate the measurement noise in mean FD from frame-level data using generalisability theory \citep{Brennan2001}, which, to the best of our knowledge, has not been reported for ABIDE. Third, we re-estimate the IQ--motion slope with measured noise and with controls for site, age, sex and diagnosis. Fourth, we test the resulting claims on ABIDE-II \citep{DiMartino2017} against criteria written down before those data were examined.
+
+% ============================================================
+\section{What Version 1 Claimed and Why It Fails}
+% ============================================================
+
+\subsection{The original model}
+
+For subject $i$ with observed IQ $X_i$ and observed mean FD $Y_i$, version 1 assumed
+\begin{equation}
+X_i = \xi_i + \varepsilon_{x,i}, \qquad Y_i = a + b\,\xi_i + \varepsilon_{y,i},
+\end{equation}
+with $\varepsilon_{x,i} \sim N(0, \sx^2)$ set by age band (4.0, 3.4 or 3.0 IQ points) and $\varepsilon_{y,i} \sim N(0, \sigma_{y,s}^2)$, where $\sigma_{y,s}$ is the standard deviation of mean FD across the subjects at site $s$. The estimator alternated a projection of each point onto the line with a weighted least-squares update using weights $w_i = 1/(\sigma_{y,s}^2 + b^2 \sx^2)$.
+
+% UNDERSTANDING CHECKPOINT 1: why b^2 * sigma_x^2 is negligible here, and what follows from that.
+In ABIDE-I the term $b^2\sx^2$ is about $10^{-5}$ and $\sigma_{y,s}^2$ averages 0.017, so the weights are almost exactly $1/\sigma_{y,s}^2$ and the projection barely moves any point. The estimator therefore behaves as weighted least squares with site-specific weights. The flaw in the update step, which matters in other datasets, is numerically irrelevant in this one.
+
+\subsection{Twelve estimators, one assumption}
+
+We fitted OLS, regression calibration, SIMEX \citep{CookStefanski1994}, Deming regression \citep{Deming1943}, weighted least squares, York regression \citep{York2004}, the original estimator, a corrected functional fit that minimises $\sum_i r_i^2 / (\sy^2 + b^2\sx^2)$ directly, two fits that add an intrinsic scatter term \citep{Tremaine2002, Kelly2007}, a structural Gaussian likelihood with latent IQ distribution and scatter, and a multilevel model with random site intercepts and slopes. Each was run under the version 1 uncertainty model and under a constant $\sy$ equal to the pooled within-site standard deviation. \Cref{tab:panel} gives the slopes.
+
+\begin{table}[H]
+\centering
+\caption{IQ slope (mm FD per IQ point, $\times 10^{-3}$) in ABIDE-I, $n = 935$. Site-specific $\sy$ is the version 1 model. Log-scale slopes ($\times 10^{-3}$ log-mm per point) use the within-site standard deviation of log FD.}
+\label{tab:panel}
+\begin{tabular}{lrrr}
+\toprule
+Estimator & Site-specific $\sy$ & Constant $\sy$ & Log FD, site-specific \\
+\midrule
+OLS & $-1.248$ & $-1.248$ & $-6.95$ \\
+Regression calibration & $-1.320$ & $-1.320$ & $-7.36$ \\
+SIMEX & $-1.327$ & $-1.327$ & $-7.41$ \\
+Deming & $-1.327$ & $-1.327$ & $-7.43$ \\
+Multilevel, random slopes & $-1.226$ & $-1.226$ & $-7.25$ \\
+\midrule
+Weighted least squares, $1/\sy^2$ & $-0.245$ & $-1.248$ & $-3.58$ \\
+York & $-0.265$ & $-1.336$ & $-3.95$ \\
+Original estimator (version 1) & $-0.265$ & $-1.335$ & $-3.95$ \\
+Corrected functional fit & $-0.265$ & $-1.336$ & $-3.95$ \\
+\midrule
+York with scatter & $-0.367$ & $-1.328$ & $-4.67$ \\
+Structural likelihood & $-0.319$ & $-1.317$ & $-4.76$ \\
+Structural fit, second implementation & $-0.319$ & $-1.319$ & $-4.76$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The estimators split by what they do with $\sigma_{y,s}$, not by family. Those that never use it as a per-subject weight agree with OLS to within 7\%. Those that use it as the whole residual variance return the version 1 slope, and weighted least squares, which has no measurement-error model at all, returns a slightly larger factor (5.08) than the EIV estimator did (4.70). With a constant $\sy$ all twelve fall between $-1.248$ and $-1.336$. The corrected functional fit and York regression agree to six significant figures in every column, and the two structural implementations agree to three, so the estimator offers nothing on these data that established methods do not.
+
+\subsection{The model cannot generate the result}
+
+% UNDERSTANDING CHECKPOINT 2: why noise in the outcome does not bias an OLS slope, but noise in the predictor does.
+Random error in an outcome does not bias a regression slope; it widens its uncertainty. Error in a predictor biases the slope towards zero \citep{Fuller1987, Carroll2006}. Under version 1's model, then, OLS should be slightly too flat, never 4.67 times too steep. We checked this by simulating 500 datasets from that model with ABIDE-I's own IQ values, sites and uncertainties. Mean OLS divided by the mean EIV estimate was 0.96 when the true slope was set to the OLS value and 1.00 when it was set to the EIV value.
+
+What does separate weighted from unweighted estimates is slope heterogeneity. Within-site slopes steepen as site mean FD rises (Spearman $\rho = -0.52$, $p = 0.023$; IQ by site-mean-FD interaction $p = 0.006$ with site-clustered errors). Sites with more motion have both a wider spread and a steeper slope, and weighting by $1/\sigma_{y,s}^2$ removes their influence. Version 1 named this pattern ``reverse attenuation'' and read it as OLS bias. It is a description of which sites the estimate listens to.
+
+\subsection{Other corrections to version 1}
+
+Version 1 described the estimator as an EM algorithm; it is an alternating estimating rule. It reported convergence in 47 iterations; the released code converges in 8. It gave the range of $\sigma_{y,s}$ as 0.029 mm (Caltech) to 0.265 mm (NYU); those values belong to SBL and UCLA\_2, and NYU's is 0.050 mm. It stated that IQ was measured with the WISC-IV or WAIS-IV; the recorded instruments vary, and the WASI is the most common (485 of the 805 participants with a recorded test type). Its $8 \times 8$ sensitivity grid multiplied $\sy$ by constants, which leaves the relative site weights unchanged and so could not test the assumption at issue; within that grid the original estimator fails to converge in 4 cells and returns a slope steeper than OLS in 8.
+
+% ============================================================
+\section{Methods}
+% ============================================================
+
+\subsection{Data}
+
+\textbf{ABIDE-I.} The phenotypic file from the Preprocessed Connectomes Project and the version 1 filters (IQ, FD and age present; IQ above 40; not rated ``fail'' by the first quality rater) give $n = 935$ across 19 sites (449 autism, 486 typically developing). Frame-level FD was taken from the confounds tables of the public fMRIPrep \citep{Esteban2019} derivatives for ABIDE-I, which exist for 853 of these participants. The USM site is absent from that release (70 of 71 participants), so frame-level results describe 18 sites in effect. Runs contain 81 to 319 frames (median 179).
+
+\textbf{ABIDE-II.} Participant tables and fMRIPrep confounds tables were taken from the same public repository. Of 1,007 participants in the 16 collections with a participant table, 909 have IQ above 40, age, sex and diagnosis, and 461 of those have frame-level data. One site with fewer than five was dropped, leaving $n = 460$ across 11 sites (215 autism, 245 typically developing; mean age 12.8 years). One site, KKI, contributes 192 participants. ABIDE-II has no rater quality flag.
+
+\textbf{Outcome.} Analyses on $n = 935$ use the phenotypic mean FD, which follows the \citet{Jenkinson2002} definition. Frame-level analyses use the mean of fMRIPrep's FD series for the first run, which follows \citet{Power2012}. The two correlate 0.956 across the 853 participants with both; their means differ (0.127 and 0.204 mm). FD is strongly right-skewed (skewness 3.9 raw, 0.7 after taking logs), and the site standard deviation rises with the site mean ($\rho = 0.81$). We report raw and log FD and treat the log scale as primary.
+
+\subsection{Generalisability study}
+
+% UNDERSTANDING CHECKPOINT 3: what a G coefficient is and why cutting the run into segments yields one.
+Each run was cut into $K$ contiguous segments ($K = 2, 4, 8$) and the mean FD of each segment computed. Within sites, with site-by-segment means removed, the design is persons crossed with segments. The person variance $\sigma^2_p$ and the person-by-segment variance $\sigma^2_{pe}$ follow from the analysis-of-variance mean squares, and the generalisability coefficient of the full-run mean is
+\begin{equation}
+G = \frac{\sigma^2_p}{\sigma^2_p + \sigma^2_{pe}/K}.
+\end{equation}
+$G$ is the share of between-person variance in the scan mean that is stable across the scan. It rises with $K$ when motion drifts slowly, so $K = 2$ is the conservative figure. For participants with several runs we report the single-run intraclass correlation. A per-subject noise standard deviation for the run mean was computed from eight block means (the standard deviation of the block means divided by $\sqrt{8}$), and divided by the mean for the log scale.
+
+\subsection{Slope estimation and inference}
+
+Controls (site indicators, age, age squared, sex, diagnosis) were partialled out of IQ and FD before estimation. We report OLS, regression calibration, York regression, and a structural fit that maximises the joint Gaussian likelihood of the observed pairs with a latent IQ distribution, known per-subject error variances and an estimated intrinsic variance. Each EIV fit was run with measured noise and with the version 1 site standard deviation. Intervals are percentile intervals from 1,000 bootstrap resamples of whole sites. Because 19 or fewer clusters make such intervals optimistic, tests of the controlled slope use the wild cluster bootstrap with the null imposed \citep{Cameron2008}, 4,999 draws. A simulation of 300 datasets with noise proportional to the level of motion, reported with Monte Carlo means \citep{Morris2019}, checked the structural fit on both scales.
+
+\subsection{Replication plan}
+
+The ABIDE-II analysis followed a written plan with pass criteria. The plan's SHA-256 hash was recorded at 03:58 UTC on 12 November 2026; ABIDE-II outcomes were first read at 04:05 UTC. Only the repository layout and the header of one participant table had been inspected beforehand. The plan was not lodged with an external registry, so it constrains our own analytic freedom without providing independent proof of timing. The primary test was the controlled log-scale slope.
+
+% ============================================================
+\section{Results}
+% ============================================================
+
+\subsection{Mean FD is reliable within a scan}
+
+\begin{table}[H]
+\centering
+\caption{Generalisability of the run-mean FD, pooled within site. Noise share is the proportion of within-site variance in the run mean attributed to within-scan fluctuation.}
+\label{tab:g}
+\begin{tabular}{llrrrr}
+\toprule
+Dataset & Scale & $K$ & $G$ & Noise share & Site share of total \\
+\midrule
+ABIDE-I ($n = 853$) & Raw & 2 & 0.839 & 16.1\% & 6.3\% \\
+ & Raw & 8 & 0.906 & 9.4\% & 6.3\% \\
+ & Log & 2 & 0.903 & 9.7\% & 13.1\% \\
+ & Log & 8 & 0.946 & 5.4\% & 11.4\% \\
+ABIDE-II ($n = 460$) & Raw & 2 & 0.789 & 21.1\% & 8.3\% \\
+ & Raw & 8 & 0.886 & 11.4\% & 8.5\% \\
+ & Log & 2 & 0.881 & 11.9\% & 9.9\% \\
+ & Log & 8 & 0.931 & 6.9\% & 10.1\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Between 5\% and 21\% of the within-site variance in mean FD is within-scan noise (\cref{tab:g}). Version 1 assumed 100\%. The median per-subject noise standard deviation in ABIDE-I is 0.013 mm against a mean site standard deviation of 0.188 mm on the same FD measure, a median ratio of 0.098. Site by site, the estimated true person standard deviation tracks the observed one: UM\_1 has an observed spread of 0.431 mm and a true spread of 0.409 mm; NYU has 0.069 and 0.064. Sites differ in how much their participants differ, not in how noisily they are measured.
+
+% FIGURE 1 PLACEHOLDER
+% Shows: per-site observed SD of run-mean FD (x) against estimated true person SD (y), ABIDE-I and ABIDE-II,
+%        with the identity line; point size by n.
+% Purpose: makes visible that site spread is person variance.
+% Data: experiments/EXP-04.../results/g2_per_site.csv and experiments/EXP-06.../results/g_per_site.csv
+
+Reliability across separate runs is lower. For 23 ABIDE-I participants at one site with two or three runs, the single-run intraclass correlation is 0.39 (raw) and 0.45 (log). For 57 ABIDE-II participants at two sites with three runs each it is 0.42 and 0.60. These are same-session figures from few sites and are imprecise.
+
+\subsection{With measured noise, the structural fit agrees with OLS}
+
+\begin{table}[H]
+\centering
+\caption{IQ slope on log FD ($\times 10^{-3}$ per IQ point) with 95\% site-bootstrap intervals. Controls: site, age, age squared, sex, diagnosis.}
+\label{tab:measured}
+\begin{tabular}{llrr}
+\toprule
+Dataset & Estimator & No controls & With controls \\
+\midrule
+ABIDE-I & OLS & $-6.1$ [$-11.4$, $-2.1$] & $-3.7$ [$-8.3$, $-0.5$] \\
+($n = 853$) & Structural, measured noise & $-6.0$ [$-11.8$, $-1.7$] & $-3.6$ [$-8.5$, $-0.3$] \\
+ & Structural, site-SD noise & $-3.9$ [$-9.3$, $-1.0$] & $-1.9$ [$-7.1$, $+0.4$] \\
+ABIDE-II & OLS & $-2.0$ [$-8.2$, $+3.7$] & $-1.8$ [$-10.5$, $+3.3$] \\
+($n = 460$) & Structural, measured noise & $-2.2$ [$-8.4$, $+3.6$] & $-1.8$ [$-11.0$, $+3.8$] \\
+ & Structural, site-SD noise & $-1.2$ [$-6.4$, $+3.8$] & $-0.7$ [$-7.1$, $+3.2$] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+On the log scale the structural fit with measured noise reproduces OLS in both datasets, with and without controls (\cref{tab:measured}). Substituting the site standard deviation for the measured noise flattens the slope by 36\% to 61\%. York regression, which has no scatter term, cannot accommodate realistic noise: its reduced $\chi^2$ is 15.6 in ABIDE-I and 13.4 in ABIDE-II with controls, and its slope is more than twenty times the OLS value.
+
+% UNDERSTANDING CHECKPOINT 4: why the raw-scale structural estimate is flatter than OLS even with measured noise.
+On the raw scale the picture is less clean. Without controls the structural fit gives $-0.73 \times 10^{-3}$ mm per point against $-1.68 \times 10^{-3}$ for OLS in ABIDE-I; with controls, $-0.71$ against $-0.83$. Measured noise rises with a participant's level of motion (Spearman 0.84), so high movers receive less weight. In the simulation with proportional noise, the structural fit recovered 99.9\% of the true slope on the log scale and 88.1\% of the target on the raw scale, while OLS recovered 94.2\% and 95.5\%. The raw-scale gap in the data is larger than this bias, which indicates that slope differences between high and low movers also contribute. We regard the log scale as the appropriate one for these data.
+
+\subsection{The IQ slope under controls}
+
+\begin{table}[H]
+\centering
+\caption{OLS slope of FD on IQ in ABIDE-I ($n = 935$, phenotypic FD) as controls are added, with 95\% site-bootstrap intervals. Raw slopes $\times 10^{-3}$ mm per point; log slopes $\times 10^{-3}$ per point.}
+\label{tab:ladder}
+\begin{tabular}{lrr}
+\toprule
+Controls & Raw FD & Log FD \\
+\midrule
+None & $-1.25$ [$-2.48$, $-0.38$] & $-6.95$ [$-12.4$, $-2.5$] \\
+Site & $-1.04$ [$-2.22$, $-0.35$] & $-6.12$ [$-12.3$, $-2.3$] \\
+Site, age, sex & $-0.96$ [$-1.96$, $-0.29$] & $-5.56$ [$-10.5$, $-2.1$] \\
+Site, age, sex, diagnosis & $-0.70$ [$-1.63$, $-0.08$] & $-4.19$ [$-9.1$, $-1.0$] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Controls remove about 40\% of the pooled slope (\cref{tab:ladder}). Diagnosis is the largest single contributor after site: with the other controls held fixed, typically developing participants have 0.23 lower log FD than autistic participants in ABIDE-I ($p < 0.001$) and 0.37 lower in ABIDE-II ($p < 10^{-8}$), and the autism group has the lower mean IQ. Once the controls are in, IQ accounts for about half a percent of the variance in FD.
+
+The controlled slope is borderline under inference suited to 19 clusters. On the log scale the cluster-robust $p$ is 0.041, the wild cluster bootstrap $p$ is 0.052, and a random-slope multilevel model gives $p = 0.041$. On the raw scale all three are near 0.07. The slope is negative with every site left out in turn (log: $-5.3$ to $-3.3 \times 10^{-3}$). Including the 94 participants who failed quality rating changes it by under 7\%. Excluding participants with mean FD above 0.2 mm, a selection on the outcome, cuts it to $-1.85 \times 10^{-3}$. A quadratic IQ term adds nothing ($p = 0.79$).
+
+Measurement error in IQ works in the opposite direction to the version 1 claim. With the version 1 error values the correction steepens the controlled slope by 6\%. Those values assume a reliability near 0.945. Verbal and performance IQ correlate 0.47 within site, which by the Spearman-Brown formula gives 0.64 as a lower bound for the full-scale score; at that bound the controlled log slope would be $-6.9 \times 10^{-3}$. The true reliability is likely well above the bound, since the two part-scores measure partly different abilities.
+
+\subsection{Replication in ABIDE-II}
+
+\begin{table}[H]
+\centering
+\caption{Outcomes of the tests specified in advance for ABIDE-II.}
+\label{tab:plan}
+\small
+\begin{tabular}{p{5.0cm}p{3.6cm}p{2.9cm}p{2.3cm}}
+\toprule
+Test & Result & Criterion & Outcome \\
+\midrule
+H1. $G$ of log FD, two halves & 0.881 & $\geq 0.80$ & Pass \\
+H2. Controlled log slope, wild cluster bootstrap (primary) & $-1.76 \times 10^{-3}$, $p = 0.68$ & negative, $p < 0.05$ & Fail \\
+H2b. Slope inside ABIDE-I interval & $-1.76 \times 10^{-3}$ & $[-9.1, -1.0] \times 10^{-3}$ & Pass \\
+H3. Structural with measured noise $\div$ OLS & 1.013 & 0.90 to 1.10 & Not interpretable \\
+H4. OLS $\div$ structural with site-SD noise, raw & 7.02 & $> 1.5$ & Not interpretable \\
+H5. York reduced $\chi^2$ & 13.4 & $> 5$ & Pass \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The measurement claims replicated and the substantive one did not (\cref{tab:plan}). The plan classed H3 and H4 as not interpretable when the OLS interval includes zero, which it does; the H3 ratio nonetheless sits inside its criterion. H2b passes only because the ABIDE-II interval is wide. Pooling the two datasets (1,313 participants, 30 sites) gives a controlled log slope of $-3.1 \times 10^{-3}$ with wild cluster $p = 0.072$.
+
+An exploratory finding from ABIDE-I did not survive. There the IQ slope appeared steeper in the autism group (interaction $p = 0.035$). In ABIDE-II the interaction has the opposite sign ($p = 0.045$). We report both and draw no conclusion from either.
+
+% ============================================================
+\section{Discussion}
+% ============================================================
+
+The central claim of version 1 does not hold. Its uncertainty model called between-subject variation noise, its estimator then down-weighted the sites where people differ most, and the gap between weighted and unweighted slopes was read as bias in OLS. Measured directly, within-scan noise is about a tenth of what the model assumed, and with that noise in place an errors-in-variables fit and OLS give the same answer on the log scale. Version 1 itself identified this assumption as its main limitation. The limitation turned out to carry the whole result.
+
+Three things follow for work on motion. Mean FD is a dependable summary of how much a person moved in a given scan, with generalisability between 0.79 and 0.95 across two datasets and two scales. It is a much weaker measure of a person's general tendency to move: across runs in the same session the intraclass correlation is 0.4 to 0.6 in the small subsets available. Studies that treat motion as a trait should expect substantial attenuation from a single scan, and that attenuation is an errors-in-variables problem of the ordinary kind.
+
+The IQ--motion association is less secure than a pooled regression implies. In ABIDE-I about 40\% of it is accounted for by site, age, sex and diagnosis, the remainder is borderline, and it was not confirmed in ABIDE-II. The ABIDE-II interval is wide and includes the ABIDE-I estimate, so the replication is uninformative about small effects; it rules out neither zero nor the original value. What both datasets agree on is that autistic participants move more, by 0.23 to 0.37 log units after controls. An analysis that adjusts connectivity for motion using a pooled IQ--motion slope, without accounting for diagnosis, is adjusting partly for group membership.
+
+There is a general point about errors-in-variables methods here, and it is the one the author, whose background is in organisational psychology and psychometrics, should have applied at the outset. Classical test theory separates a score's variance into true-score variance and error variance, and no analysis is entitled to assign the former to the latter. A functional EIV model with no intrinsic scatter term does exactly that whenever the supplied uncertainties are smaller than the residual spread, and it does the reverse, calling people noise, whenever the uncertainties are set from that spread. Astronomers met this problem and added a scatter term \citep{Tremaine2002, Kelly2007}. The reduced $\chi^2$ of 13 to 16 for York regression in both datasets is the signature of the omission, and it is a cheap diagnostic: a value far from one means the uncertainty model is wrong, and no slope from that fit should be interpreted.
+
+\subsection{Limitations}
+
+The frame-level sample omits one ABIDE-I site and about half of the eligible ABIDE-II participants, because public fMRIPrep derivatives are incomplete; which participants were processed is unlikely to be random with respect to site. The segment-based noise estimate captures fluctuation over minutes within a session. It does not capture session-to-session variation, and it does not capture error in the realignment estimates themselves. Between-run reliability rests on two or three sites. The two FD definitions correlate 0.956 but are not identical. Site-bootstrap intervals with 11 to 19 clusters are optimistic, which is why tests use the wild cluster bootstrap; the two can disagree, as they do for the controlled ABIDE-I slope. The ABIDE-I analyses were exploratory and many were run; only the ABIDE-II tests were specified in advance, and that plan was not externally registered. The choice of the log scale was made after seeing the ABIDE-I data. IQ instruments vary across sites, and adding test type as a control changes the controlled log slope from $-4.19$ to $-3.92 \times 10^{-3}$. All associations are cross-sectional and none is causal.
+
+\subsection{Future directions}
+
+A between-session generalisability study, using a dataset with repeat visits, would complete the variance decomposition that this paper could carry only to the level of the scan. The IQ--motion question needs a larger confirmatory sample with complete frame-level data; the pooled estimate here ($p = 0.072$) suggests an effect near $-3 \times 10^{-3}$ log units per point, small enough that about 1,300 participants across 30 sites did not settle it. The connectivity-level consequences that version 1 speculated about remain untested, and after this revision there is less reason to expect them.
+
+% ============================================================
+\section{Conclusion}
+% ============================================================
+
+The reported 4.67-fold inflation of the IQ--motion slope in ABIDE-I was an artefact of treating between-subject spread as measurement noise, and it is withdrawn. Mean framewise displacement is a reliable measure of motion within a scan in both ABIDE-I and ABIDE-II. The association between IQ and motion shrinks by about 40\% under controls, is borderline in ABIDE-I and was not confirmed in ABIDE-II; the difference in motion between autistic and typically developing participants is the result that holds in both.
+
+% ============================================================
+\section*{AI Disclosure}
+% ============================================================
+% TODO (author): confirm each sentence below describes what happened before submission.
+
+This research was conducted with AI assistance. Claude Code (Anthropic) wrote and ran the analysis code for all experiments reported here, downloaded the public data, and drafted this manuscript. The author directed the programme: the decision to rerun version 1 under the corrected method, the comparison against other errors-in-variables estimators, the generalisability study and the variance partition with controls were requested by the author. The robustness checks and the ABIDE-II replication, including its plan, were proposed and executed by the AI assistant during a review of the programme and were reviewed by the author afterwards. The author reviewed the results and the text, and takes full responsibility for all claims, interpretations and errors.
+
+In accordance with arXiv policy, the author confirms that generative AI tools were used as described above and that all AI-generated content has been verified for accuracy.
+
+\section*{Data and Code Availability}
+
+ABIDE-I and ABIDE-II phenotypic data and fMRIPrep derivatives are public (\url{http://fcon_1000.projects.nitrc.org/indi/abide/}). Code, result tables, the replication plan and its hash are at \url{https://github.com/kareem-soliman-ai/eiv-abide-replication} under CC BY-NC-SA 4.0. No result file contains subject identifiers.
+
+\section*{Acknowledgements}
+
+The author thanks the ABIDE consortium and contributing sites, and the Preprocessed Connectomes Project for the public derivatives.
+% TODO (author): the v1 acknowledgement of Johan Wennemyr concerned replication of the original estimator; decide whether to retain.
+
+% Reference details: authors, venue, year and DOI were checked against OpenAlex on 2026-11-12.
+% TODO (author): fill volume and page numbers from each DOI before submission; add the arXiv identifier for Soliman2026v1.
+\begin{thebibliography}{22}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\doi}[1]{doi: #1}
+
+\bibitem[Brennan(2001)]{Brennan2001}
+Robert~L. Brennan.
+\newblock \emph{Generalizability Theory}.
+\newblock Springer, New York, 2001.
+\newblock \doi{10.1007/978-1-4757-3456-0}.
+
+\bibitem[Cameron et~al.(2008)Cameron, Gelbach, and Miller]{Cameron2008}
+A.~Colin Cameron, Jonah~B. Gelbach, and Douglas~L. Miller.
+\newblock Bootstrap-based improvements for inference with clustered errors.
+\newblock \emph{Review of Economics and Statistics}, 2008.
+\newblock \doi{10.1162/rest.90.3.414}.
+
+\bibitem[Carroll et~al.(2006)Carroll, Ruppert, Stefanski, and Crainiceanu]{Carroll2006}
+Raymond~J. Carroll, David Ruppert, Leonard~A. Stefanski, and Ciprian~M. Crainiceanu.
+\newblock \emph{Measurement Error in Nonlinear Models: A Modern Perspective}.
+\newblock Chapman and Hall/CRC, 2nd edition, 2006.
+
+\bibitem[Cook and Stefanski(1994)]{CookStefanski1994}
+J.~R. Cook and L.~A. Stefanski.
+\newblock Simulation-extrapolation estimation in parametric measurement error models.
+\newblock \emph{Journal of the American Statistical Association}, 1994.
+\newblock \doi{10.1080/01621459.1994.10476871}.
+
+\bibitem[Couvy-Duchesne et~al.(2014)]{CouvyDuchesne2014}
+Baptiste Couvy-Duchesne et~al.
+\newblock Heritability of head motion during resting state functional {MRI} in 462 healthy twins.
+\newblock \emph{NeuroImage}, 2014.
+\newblock \doi{10.1016/j.neuroimage.2014.08.010}.
+% TODO (author): automated check matched title and DOI but not the first-author spelling; confirm the author list from the DOI.
+
+\bibitem[Deming(1943)]{Deming1943}
+W.~Edwards Deming.
+\newblock \emph{Statistical Adjustment of Data}.
+\newblock Wiley, New York, 1943.
+
+\bibitem[Di~Martino et~al.(2014)]{DiMartino2014}
+Adriana Di~Martino et~al.
+\newblock The autism brain imaging data exchange: towards a large-scale evaluation of the intrinsic brain architecture in autism.
+\newblock \emph{Molecular Psychiatry}, 2014.
+\newblock \doi{10.1038/mp.2013.78}.
+
+\bibitem[Di~Martino et~al.(2017)]{DiMartino2017}
+Adriana Di~Martino et~al.
+\newblock Enhancing studies of the connectome in autism using the autism brain imaging data exchange {II}.
+\newblock \emph{Scientific Data}, 2017.
+\newblock \doi{10.1038/sdata.2017.10}.
+
+\bibitem[Engelhardt et~al.(2017)]{Engelhardt2017}
+Laura~E. Engelhardt et~al.
+\newblock Children's head motion during {fMRI} tasks is heritable and stable over time.
+\newblock \emph{Developmental Cognitive Neuroscience}, 2017.
+\newblock \doi{10.1016/j.dcn.2017.01.011}.
+
+\bibitem[Esteban et~al.(2019)]{Esteban2019}
+Oscar Esteban et~al.
+\newblock {fMRIPrep}: a robust preprocessing pipeline for functional {MRI}.
+\newblock \emph{Nature Methods}, 2019.
+\newblock \doi{10.1038/s41592-018-0235-4}.
+
+\bibitem[Fuller(1987)]{Fuller1987}
+Wayne~A. Fuller.
+\newblock \emph{Measurement Error Models}.
+\newblock Wiley, New York, 1987.
+\newblock \doi{10.1002/9780470316665}.
+
+\bibitem[Jenkinson et~al.(2002)]{Jenkinson2002}
+Mark Jenkinson, Peter Bannister, Michael Brady, and Stephen Smith.
+\newblock Improved optimization for the robust and accurate linear registration and motion correction of brain images.
+\newblock \emph{NeuroImage}, 2002.
+\newblock \doi{10.1006/nimg.2002.1132}.
+
+\bibitem[Kelly(2007)]{Kelly2007}
+Brandon~C. Kelly.
+\newblock Some aspects of measurement error in linear regression of astronomical data.
+\newblock \emph{The Astrophysical Journal}, 2007.
+\newblock \doi{10.1086/519947}.
+
+\bibitem[Morris et~al.(2019)Morris, White, and Crowther]{Morris2019}
+Tim~P. Morris, Ian~R. White, and Michael~J. Crowther.
+\newblock Using simulation studies to evaluate statistical methods.
+\newblock \emph{Statistics in Medicine}, 2019.
+\newblock \doi{10.1002/sim.8086}.
+
+\bibitem[Power et~al.(2012)]{Power2012}
+Jonathan~D. Power, Kelly~A. Barnes, Abraham~Z. Snyder, Bradley~L. Schlaggar, and Steven~E. Petersen.
+\newblock Spurious but systematic correlations in functional connectivity {MRI} networks arise from subject motion.
+\newblock \emph{NeuroImage}, 2012.
+\newblock \doi{10.1016/j.neuroimage.2011.10.018}.
+
+\bibitem[Satterthwaite et~al.(2012)]{Satterthwaite2012}
+Theodore~D. Satterthwaite et~al.
+\newblock Impact of in-scanner head motion on multiple measures of functional connectivity: relevance for studies of neurodevelopment in youth.
+\newblock \emph{NeuroImage}, 2012.
+\newblock \doi{10.1016/j.neuroimage.2011.12.063}.
+
+\bibitem[Siegel et~al.(2017)]{Siegel2017}
+Joshua~S. Siegel et~al.
+\newblock Data quality influences observed links between functional connectivity and behavior.
+\newblock \emph{Cerebral Cortex}, 2017.
+\newblock \doi{10.1093/cercor/bhw253}.
+
+\bibitem[Soliman(2026)]{Soliman2026v1}
+Kareem Soliman.
+\newblock The {IQ}-motion confound in multi-site autism {fMRI} may be inflated by site-correlated measurement uncertainty.
+\newblock arXiv preprint, version 1, April 2026.
+
+\bibitem[Tremaine et~al.(2002)]{Tremaine2002}
+Scott Tremaine et~al.
+\newblock The slope of the black hole mass versus velocity dispersion correlation.
+\newblock \emph{The Astrophysical Journal}, 2002.
+\newblock \doi{10.1086/341002}.
+
+\bibitem[Van~Dijk et~al.(2012)Van~Dijk, Sabuncu, and Buckner]{VanDijk2012}
+Koene R.~A. Van~Dijk, Mert~R. Sabuncu, and Randy~L. Buckner.
+\newblock The influence of head motion on intrinsic functional connectivity {MRI}.
+\newblock \emph{NeuroImage}, 2012.
+\newblock \doi{10.1016/j.neuroimage.2011.07.044}.
+
+\bibitem[York et~al.(2004)]{York2004}
+Derek York, Norman~M. Evensen, Margarita~L{\'o}pez Mart{\'i}nez, and Jonathan De~Basabe Delgado.
+\newblock Unified equations for the slope, intercept, and standard errors of the best straight line.
+\newblock \emph{American Journal of Physics}, 2004.
+\newblock \doi{10.1119/1.1632486}.
+
+\bibitem[Zeng et~al.(2014)]{Zeng2014}
+Ling-Li Zeng et~al.
+\newblock Neurobiological basis of head motion in brain imaging.
+\newblock \emph{Proceedings of the National Academy of Sciences}, 2014.
+\newblock \doi{10.1073/pnas.1317424111}.
+
+\end{thebibliography}
+
+\end{document}
